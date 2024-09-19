@@ -1,14 +1,7 @@
-# Sample Hardhat Project
+# AdvancedTokenSwap 
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a Hardhat Ignition module that deploys that contract.
+- The AdvancedTokenSwap is a Solidity smart contract that facilitates the deposit and exchange of ERC20 tokens in a trustless and decentralized manner. Users can deposit tokens and specify allowed tokens for purchase. The contract supports token swaps with specified amounts and ensures that users can withdraw their deposits if needed.
 
-Try running some of the following tasks:
+The contract leverages OpenZeppelin’s SafeERC20 for secure token operations and ReentrancyGuard to prevent reentrancy attacks.
 
-```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat ignition deploy ./ignition/modules/Lock.ts
-```
-# SwapContractEVM
+### Check Test file foor test cases done with hardhat
