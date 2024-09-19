@@ -3,11 +3,11 @@ pragma solidity ^0.8.17;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 
-contract KoxyToken is ERC20 {
+contract GUZToken is ERC20 {
 
     address public owner;
 
-    constructor() ERC20("KoxyToken", "KT") {
+    constructor() ERC20("GUZToken", "KT") {
         owner = msg.sender;
          _mint(msg.sender, 10000e18);
 
