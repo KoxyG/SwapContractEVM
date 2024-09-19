@@ -75,6 +75,37 @@ describe("Lock", function () {
 
       
     });
+
+    it("Deposit 200 GUZToken successfully", async function () {
+      // Deploy contracts
+      const { AK4Token } = await loadFixture(deployAK4Token);
+      const { GUZToken } = await loadFixture(deployGUZToken);
+      const { W3BToken } = await loadFixture(deployW3BToken);
+      const { AdvancedTokenSwap } = await loadFixture(deployAdvancedTokenSwap);
+
+      // Approve token transfer
+      const amountToDeposit = 200;
+      await GUZToken.approve(AdvancedTokenSwap, amountToDeposit);
+
+      // Deposit tokens
+      const depositTx = await AdvancedTokenSwap.depositToken(
+        GUZToken,
+        amountToDeposit,
+        [AK4Token, W3BToken]
+      );
+
+      await depositTx.wait();
+
+     
+      const depositDetails = await AdvancedTokenSwap.getDepositDetails(1);
+
+      expect(depositDetails.amountDeposited).to.equal(amountToDeposit);
+      expect(depositDetails.tokenDeposited).to.equal(GUZToken);
+
+      
+    });
+
+
    
   });
 
