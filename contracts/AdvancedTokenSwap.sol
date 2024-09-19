@@ -55,10 +55,11 @@ contract AdvancedTokenSwap is ReentrancyGuard {
         return depositCount;
     }
 
+
     function purchaseToken(uint256 _depositId, address _tokenToPurchaseWith, uint256 _amountToPurchase, uint256 _amountToReceive) external nonReentrant {
         Deposit storage deposit = deposits[_depositId];
 
-        if (deposit.depositor == address(0)) revert("Deposit does not exist");
+        
         if (_amountToPurchase == 0) revert InvalidPurchaseAmount();
         if (_amountToReceive == 0) revert InvalidReceiveAmount();
         if (_amountToReceive > deposit.amountDeposited) revert InsufficientDepositedTokens();
@@ -72,6 +73,7 @@ contract AdvancedTokenSwap is ReentrancyGuard {
             }
         }
         if (!isAllowed) revert CantPurchaseWithThisToken();
+        
 
         deposit.amountDeposited -= _amountToReceive;
 
@@ -80,6 +82,8 @@ contract AdvancedTokenSwap is ReentrancyGuard {
 
         emit TokenPurchased(_depositId, msg.sender, _tokenToPurchaseWith, _amountToPurchase, _amountToReceive);
     }
+
+
 
     function withdrawDeposit(uint256 _depositId) external nonReentrant {
         Deposit storage deposit = deposits[_depositId];

@@ -14,7 +14,7 @@ describe("Lock", function () {
     const erc20Token = await hre.ethers.getContractFactory("AK4Token");
     const AK4Token = await erc20Token.deploy();
 
-    return { AK4Token };
+    return { AK4Token, owner };
   }
 
   async function deployGUZToken() {
@@ -27,12 +27,12 @@ describe("Lock", function () {
   }
 
   async function deployW3BToken() {
-    const [owner, otherAccount] = await hre.ethers.getSigners();
+    const [buyer] = await hre.ethers.getSigners();
 
     const erc20Token = await hre.ethers.getContractFactory("W3BToken");
     const W3BToken = await erc20Token.deploy();
 
-    return { W3BToken };
+    return { W3BToken, buyer };
   }
 
   async function deployAdvancedTokenSwap() {
@@ -55,7 +55,7 @@ describe("Lock", function () {
       const { AdvancedTokenSwap } = await loadFixture(deployAdvancedTokenSwap);
 
       // Approve token transfer
-      const amountToDeposit = 100;
+      const amountToDeposit = 1000;
       await AK4Token.approve(AdvancedTokenSwap, amountToDeposit);
 
       // Deposit tokens
@@ -100,11 +100,40 @@ describe("Lock", function () {
       const depositDetails = await AdvancedTokenSwap.getDepositDetails(1);
 
       expect(depositDetails.amountDeposited).to.equal(amountToDeposit);
-      expect(depositDetails.tokenDeposited).to.equal(GUZToken);
-
-      
+      expect(depositDetails.tokenDeposited).to.equal(GUZToken);  
     });
 
+    it("Purchase 50 AK4Token with 100 W3BToken successfully", async function () {
+      // Deploy contracts
+      const { AK4Token, owner } = await loadFixture(deployAK4Token);
+      const { GUZToken } = await loadFixture(deployGUZToken);
+      const { W3BToken, buyer } = await loadFixture(deployW3BToken);
+      const { AdvancedTokenSwap } = await loadFixture(deployAdvancedTokenSwap);
+    
+      // Get signers
+      const [signer1] = await hre.ethers.getSigners();
+    
+      // First, deposit AK4Tokens
+      const depositAmount = 100;
+      await AK4Token.approve(AdvancedTokenSwap, depositAmount);
+      await AdvancedTokenSwap.depositToken(AK4Token, depositAmount, [W3BToken, GUZToken]);
+    
+      // Prepare for purchase
+      const purchaseAmount = 100;
+      const receiveAmount = 50;
+    
+
+      await W3BToken.connect(buyer).approve(AdvancedTokenSwap, purchaseAmount);
+    
+      // Buyer purchases AK4Tokens
+      await expect(AdvancedTokenSwap.connect(buyer).purchaseToken(
+        1,
+        W3BToken,
+        purchaseAmount,
+        receiveAmount
+      )).to.emit(AdvancedTokenSwap, "TokenPurchased");
+  
+    });
 
    
   });
